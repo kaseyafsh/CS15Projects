@@ -1,0 +1,307 @@
+/*******************************************************************************
+HW 1: CharArrayList 
+* Comp 15 Fall 2023
+* README
+* Author: Kasey Afshani (kafsha01@tufts.edu)
+*******************************************************************************/
+
+
+Program Purpose:
+---------------
+
+    The purpose of this program is to create a class CharArrayList that is able 
+    to grow and shrink as new characters are added or removed by dynamically 
+    allocating memory on the heap. 
+
+Compile/run:
+-----------
+
+    Compile the program using the command "unit_test." No executable was created 
+    for this assignment. 
+
+
+Acknowledgments:
+---------------
+
+    Yoda, Erin, Ava, Sarah, and Eddy. Thank you!
+Files:
+-----
+
+CharArrayList.h: Interface for a CharArrayList Class.
+
+CharArrayList.cpp: This is the implementation of the CharArrayList class. It 
+includes all of the class definitions for CharArrayList, which tells the program 
+what to do when any of these public functions are called. 
+
+unit_tests.h: A unit testing file for the CharArrayList Class. 
+    This runs in conjunction with the unit_test framework to allow for testing 
+    of individual functions and allows us to make sure that each function is 
+    working properly 
+
+Makefile: File to build the program.
+
+
+Data Structures:
+---------------
+
+    This main data structure of this lab is a CharArrayList, which is a 
+    dynamically allocated array. This means that the array is able to grow as 
+    much as the user wants it to because the memory that's being used is 
+    allocated on the heap. This is probably the biggest advantage of array 
+    lists, along with the fact that you can access data instantanously and that 
+    data is stored contiguously in memory. However, the disadvantages to array 
+    lists is that insertions and removals can take a lot of time, as you have
+    to shift everything in the array list over. There is also a tradeoff of 
+    time and space in array lists, because expansion is time efficient, but 
+    space inefficient. I chose to use the ArrayList structure because if we are
+    looking at chars in a list, we want to be able to easily access each index
+    of the array and find what we're looking for as quickly as possible.  
+
+    One of the algorithms used for this code was for inserting or removing from
+    a CharArrayList. When one of these functions are called, the algorithm 
+    finds the index of the char that is being moved or replaced, and shifts 
+    all of the chars in the indicies following it over, either to the right or 
+    the left depending on if a char was inserted or removed. 
+
+
+Testing:
+-------
+
+    TODO: Write a short description of how you tested your ArrayList. What was
+    the most challenging part of this lab? 
+
+    To start, I created getters and setters for each of the private member 
+    variables. I later deleted these as I wrote more function declarations, as
+    there were public functions declared (listed in the spec) that "got" private 
+    member variables. The exception to this was capacity, because the client 
+    doesn't need to know about capacity. All of my capacity was tested and 
+    then deleted because my getCapacity function was deleted. 
+
+    To test the constructors, I found each element of the array and asserted 
+    that it was initialized to what I wanted it to be. I also tested the 
+    capacity for these constructors, but it was later deleted. I also used the 
+    constructors to test other functions within the constructor test, such as 
+    isEmpty() and size(). 
+
+    I tested constructor 4 a bit differently than the first three. I created a 
+    populated array list and used that array list to create a copy array, and 
+    then asserted that all of the characteristics of the copy array were equal 
+    to that of the original array.
+
+    The destructor was tested implicitly anytime the constructors were called. 
+    Each time the test passed valgrind, I knew that the destructor was working 
+    properly and recycling memory. 
+
+    To test the reassignment operator, I created three tests. Each test looked 
+    at a different iteration of how the operator could be used. The first test 
+    looked at how the operator could be used with two populated CharArrayLists. 
+    The second test looked at what would happen if I reassigned a populated 
+    CharArrayList to an empty CharArrayList. The last test looked at the 
+    reverse: populating an empty array list by reassigning it to a populated 
+    CharArrayList. In each of these tests, I used assert statements to check 
+    and see if the array list was empty, if the size of it because the size of 
+    the list it was reassigned to, and if the element at each index in the 
+    reassigned CharArrayList matched that of the one it was reassigned to. 
+
+    To test the toString and the toReverseString functions, I created three 
+    tests each, and each set followed the same structure as the previous. For 
+    that sake, I'll only describe the tests for toString, but the same tests 
+    were applied for the toReverseString function as well. Each test looked at 
+    a different constructor type. The first test looked at a populated 
+    CharArrayList, the second at an empty CharArrayList, and the third at a 
+    CharArrayList with only one element. In each test, I created a test string 
+    and asserted that that test string is equal to the appropriate message for 
+    each type of CharArrayList. (Again, this is the same thing I did for 
+    toReverseString). 
+
+    To test my replaceAt function, I tested it with a populated CharArrayList
+    and with an empty array list. For the first populated test, I replaced 
+    something in the end of the function. Then, I started playing with this 
+    more, and changed the index I was replacing and the test worked for all 
+    indicies. Currently, the test is for the last index. For the second test, 
+    I tried to replace out of range to test the range error. For the third test, 
+    I used an empty array list and tried to insert something in the "middle" of 
+    the CharArrayList and tried to catch the error. For the fourth test, I did 
+    the same thing, but for the 0th index of the empty array list. 
+
+    To test my removeAt function, I created 5 unit tests. The first one tested 
+    the condition of moving a char in the middle of an array, and my assert 
+    statements checked to see if everything shifted over and updated properly. 
+    For the second test, I used a populated CharArrayList and tried to remove 
+    a char at an out-of-range index and catch the error message. For the third
+    test, I used an empty array list and tried to remove something in the 
+    "middle" of the array list. The test caught the range error. For the fourth 
+    test, I also used an empty array list but tried to remove something at 
+    index 0. This test also caught the range error. For the fifth test, I used 
+    an array list with only one element in it and my test made sure that the 
+    CharArrayList was then empty. 
+
+    Although size was continuously tested throughout the unit_test, I created a 
+    test function that would assert the size of a populated array list is the
+    same as the numItems that I passed into the constructor. For the constructor
+    tests, I used size in my assert functions and cerr'ed numItems to ensure 
+    that size was outputing the correct number.
+
+    To test my popFromFront function, I created three tests. My popFromBack 
+    function uses the same structure for all its three tests, but I will only 
+    describe the popFromFront functions for the sake of redundancy. The first 
+    used a populated CharArrayList and my assert statements made sure that 
+    everything shifted over properly. For my second test, I used an empty array 
+    list and used my test to catch the error statement. For my third test, I 
+    used a CharArrayList of size 1 and used my test to make sure that 
+    popFromFront emptied the array list. 
+
+    I used three functions to test my pushAtBack function. For the first test, 
+    I used a populated CharArray list and used my assert statements to make sure 
+    that the last of the test list was the char I inserted and that the size 
+    of the list increased by 1. For my second test, I used an empty array list 
+    and used my assert statements to make sure that this array list had the same 
+    qualities as if it were a CharArrayList made by the second constructor. For 
+    my third test, I used a CharArrayList with one element in it and used my 
+    assert statements to make sure that the size incremented and first and last
+    were updated. This is the same testing framework that I used for my 
+    pushAtFront function, so for repetition's sake, please refer to this 
+    paragraph for both pushAtFront and pushAtBack testing. 
+
+    To test my clear function, I created to unit_tests. One tested on a 
+    populated CharArrayList and the other on an empty array list. On both tests,
+    I used the isEmpty function to assert that the array had been cleared and, 
+    in the case of the already empty function, that there were no double frees. 
+
+    Although the last function was tested implicitly through other unit tests, 
+    I also created three unit tests—one on a populated array list, one on an 
+    array list with only one element, and one on an empty array list. For the 
+    populated and single element array list, I just used assert statements to 
+    make sure that the last char was the last char in the list that I created. 
+    For the empty list, my test caught the error that the program cannot get 
+    the last of an empty array list. My "first" function was also tested in 
+    alongside the last function in these unit tests. The other way that I tested
+    my first function was for an empty array list, which caught the error that 
+    the program cannot get first for an empty array list. 
+
+    To test my elementAt function, I had two functions. The first one tested
+    each index of a populated CharArrayList to make sure that the correct 
+    char was being accessed at each index. The second test tried to get the 
+    element at an out of range index, and the test caught the error. 
+
+    I used three tests to test my insertAt function. The first test inserted a 
+    char in the middle of a populated array list and my assert statements looked
+    at each individual index in the array to make sure everything shifted over 
+    properly and that the size was correctly updated. The second test tried to 
+    insrt a character that was out of range and the test caught the error. For 
+    the third test, I tried to insert something at the end of an array list and 
+    my assert statements made sure that nothing shifted but that size increased. 
+
+    I had four tests to check my concatenate function. The first test tried to 
+    concatenate two populated CharArrayLists and the assert functions were used 
+    to make sure that size was updated, the first element stayed the same, the 
+    last element was the last element of the second list, and that a random 
+    index in the middle of the concatenated list was correct. For the second 
+    test, I tried to concatenate a list onto itself. I tested the size, first, 
+    last, and a middle index to make sure it had concatenated correctly. For the 
+    third test, I tried to concatenate an empty array list onto a populated
+    array list, and for the fourth test, I tried to concatenate a populated
+    array list onto an empty array list. In these last two tests, I made sure 
+    that the size, first, middle, and last elements were all the same as the 
+    populated list. 
+
+    For the insertInOrder function, I had 4 tests. The first one inserted 
+    a char that would go at the front of the list. I checked the first element, 
+    the size, and the elements at each index to make sure everything had shifted
+    and updated correctly. For the second test, I inserted a char that would go 
+    in the middle of the list. I also checked each element in the array and the
+    size to make sure all had updated properly. For the third test, I tried 
+    to insert a char that was the same as a char already on the list. For the 
+    fourth test, I tried to insert a char that would go at the end of the list. 
+    For these last two tests, like the first two, I looked at size and each 
+    element of the array to make sure that all had updated properly. Then, when 
+    I was trying to think of edge cases, I added a fifth test that tests for a
+    char that wasn't a-z (I used "<") and looked at the asc-ii table to see 
+    where exactly it should fall in the list, and used assert statements to 
+    make sure that's what happened. 
+
+    The most difficult part of this assignment for me was probably writing the 
+    reassignment operator. The error message that I got for it was saying that 
+    I was defining the function as a constructor, which it shouldn't be. This 
+    was because I was copying down the way that it was written on the spec as 
+    the way that it should have been written in the code, but the placement of 
+    the scope resolution operator and the ampersand needed to be  different, 
+    which led to my code not working for a while and me just really not 
+    understanding why. 
+
+    
+Time spent:
+-------
+Approximately 27 hours. 
+
+
+timer_main.cpp Questions:
+-------
+
+1. There are three categories of operations listed (insertion, removal, and 
+access). Within each category, list the times each operation took and rank the 
+operations from fastest to slowest. 
+
+
+Insert Operation: (from fastest to slowest)
+pushAtBack 100 times -- 560 nanoseconds 
+insertAt middle of list 100 times -- 1465408 nanoseconds
+pushAtFront 100 times -- 2582168 nanoseconds 
+
+Removal Operation: (from fastest to slowest)
+popFromBack 100 times -- 879 nanoseconds 
+removeAt middle of list 100 times -- 1689928 nanoseconds 
+popFromFront 100 times -- 3331420 nanoseconds 
+
+Access Operation: (from fastest to slowest)
+call first() 100 times -- 445 nanoseconds 
+call last () 100 times -- 473 nanoseconds 
+call elementAt() for middle of list 100 times -- 480 seconds 
+
+From fastest to slowest: access operation, insert operation, removal operation
+
+
+
+2. Discuss these rankings. Why were certain operations much faster or slower 
+than others? Which operations took approximately the same amount of time? What 
+are the features of array lists that caused these disparities or similarities
+in time? 
+
+The access operation was a lot faster than the others because of the way that 
+arrays are arranged. Because elements are stored contiguously in memory, they 
+are easily accessed. Nothing in the list is changing, just being fetched. 
+
+The insert and removal operations took approximately the same amount of time 
+because both of them involve shifting elements over in the array. This takes 
+a lot of space on the heap and can call for new dynamically allocated space, 
+which is inefficient and can take a lot of time. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

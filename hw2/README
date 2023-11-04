@@ -1,0 +1,350 @@
+/*******************************************************************************
+HW 2: CharLinkedList 
+* Comp 15 Fall 2023
+* README
+* Author: Kasey Afshani (kafsha01@tufts.edu)
+*******************************************************************************/
+
+
+Program Purpose:
+---------------
+
+    The purpose of this program is to create a doubly-linked list that is able 
+    to easily insert and remove chars from anywhere on the list. 
+
+Compile/run:
+-----------
+
+    Compile the program using the command "unit_test." No executable was created
+    for this assignment. 
+
+
+Acknowledgments:
+---------------
+
+    Lily, Cameron, Olivia, Sean, John, Annika — Thank you!
+Files:
+-----
+
+CharLinkedList.h: Interface for a CharLinkedList Class.
+
+CharLinkedList.cpp: This is the implementation of the CharLinkedList class. It 
+includes all of the class definitions for CharLinkedList, which tells the 
+program what to do when any of these public functions are called. 
+
+unit_tests.h: A unit testing file for the CharLinkedList Class. 
+    This runs in conjunction with the unit_test framework to allow for testing 
+    of individual functions and allows us to make sure that each function is 
+    working properly 
+
+Makefile: File to build the program.
+
+
+Data Structures:
+---------------
+
+    This main data structure of this lab is a CharLinkedList, which is a 
+    doubly-linked list consisting of a front and a back pointer. The biggest
+    advantage of doubly-linked list is how low-cost it is to insert and remove
+    elements from the linked-list. There is no need for shifting; all you have
+    to do is change a few pointers. One of the biggest disadvantages to 
+    doubly-linked lists is how high-cost it is to locate an element in the list.
+    You have to iterate through every single node in the list, which is not 
+    easy because they are not contiguous. Another disadvantage is how easy 
+    it is to lose the elements in the list, because if you accidentally point
+    something in the wrong order, you can lose access to the entire list in 
+    memory. I chose to use the doubly-linked list structure because of how 
+    efficient they are for the insertion and removal functions of lists.  
+
+    One of the algorithms used for this code was for locating a specific element
+    in the linked list. For example, when the elementAt function was called, the
+    algorithm iterates through all of the nodes as many times as the index we're
+    locating to find the char we want to manipulate. 
+
+
+Testing: 
+-------
+
+    Although this list implementation differed from HW1 (CharArrayLists), the 
+    two outputs look the same from the client's side. Because of this, lots 
+    of the unit tests that I used are derived from the unit tests used for 
+    CharArrayList and have been modified for the CharLinkedList class. 
+
+    To test the first three constructors, I found each element of the list and 
+    asserted that it was initialized to what I wanted it to be. For the default 
+    constructor, I also temporarily made the private member variables "front" 
+    and "back" public so I could make sure that it was equal to nullptr.
+    I also tested pretty basic functions such as size and isEmpty within the 
+    constructors. Rather than use toString to make sure that each char was in 
+    the correct index, I decided to use elementAt to be more precise. 
+
+    I tested the copy constructor differently than the first three. I still had 
+    three tests for this function, one for each case. For the populated list, I 
+    created a populated linked list and used that list to create a copy array,
+    and then asserted that all of the characteristics of the copy array were 
+    equal to that of the original array. This same thought process occurred for 
+    the next two tests, but copying the singleton or empty lists rather than 
+    a populated one. 
+
+    The destructor helper was tested implicitly any time the destructor ran, 
+    which was also tested implicitly any time that a new list was created. The 
+    only time that the destructor helper was called explicitly was when we 
+    were clearing the linked list for some reason (copy constructor, clear, 
+    etc). Otherwise, when I created a new node for tracking purposes, I deleted
+    it at the end of the function. Each time the test passed valgrind, I knew 
+    that the destructor was working properly and recycling memory. 
+
+    To test the reassignment operator, I created three tests. Each test looked 
+    at a different case of when the operator would be used The first test 
+    looked at how the operator could be used with two populated CharLinkedLists.
+    The second test looked at what would happen if I reassigned a populated 
+    CharLinkedList to an empty CharLinkedist. The last test looked at the 
+    reverse: populating an empty linked list by reassigning it to a populated 
+    CharLinkedList. In each of these tests, I used assert statements to check 
+    and see if the linked list was empty, if the size of it because the size of 
+    the list it was reassigned to, and if the element at each index in the 
+    reassigned CharLinkedList matched that of the one it was reassigned to. 
+
+    For the toString and the toReverseString functions, I created three 
+    tests each. Each function's tests followed the same structure as the 
+    other. To avoid repettion, I'll only describe the tests for toString, but 
+    the same tests were applied for the toReverseString function as well. 
+    Each test looked at a different length of CharLinkedList (empty, singleton,
+    and populated). In each test, I created a test string 
+    and asserted that that test string is equal to the appropriate message for 
+    each type of CharLinkedList. (Again, this is the same thing I did for 
+    toReverseString). 
+
+    To test my replaceAt function, I tested it with six different cases: an 
+    empty list, singleton list, and replacing a populated's front, middle,
+    and last elements, and one out of range function on a populated list. For 
+    the out of range ones (empty and toohigh), I tried to catch the error in 
+    my unit test and used cerr statements when these tests originally failed 
+    to see what the replaceAt function is returning as the error message. I 
+    used that information to make changes to the print statement (there was
+    some extra whitespace) and complete the function. To make the replaceAt 
+    function, I used a recursive helper function that returned the Node at the 
+    index we wanted to replace the char at. The hardest part about this function
+    was the type of pointer to return back. I spent a ridiclously long amount 
+    of time changing some & to * or ** or just regular returns. 
+
+    To test my removeAt function, I created seven unit tests. The first three 
+    tested it on a standard case of each type of constructor (empty, single, 
+    and populated). Then, I created tests for populated lists that had indexes
+    that were too high or too low. Then, I created tests that would remove 
+    either the start or the end of a populated array list to make sure 
+    everything shifted over and the first/last elements were updated properly.
+
+    Although size was continuously tested throughout the unit_test, I created a 
+    test function that would assert the size of a populated array list is the
+    same as the numItems that I passed into the constructor. 
+
+    For both my popFromFront and popFromBack functions, I used three tests each.
+    To avoid repetition, I will explain the tests for popFromFront, but these
+    same frameworks were used for popFromBack. Each test function looked at 
+    one of the three types of standard constructors (all except the copy 
+    constructor). For the empty list, the test function was supposed to (and 
+    did) catch the error. For the other two, the test checked to make sure that
+    the first of the list was updated to be the previous second in the list and
+    that the size was decremented by 1. 
+  
+    For my pushAtFront function, I followed the same framework that I used in 
+    lab. To test it, I created three tests, one for each type of list (empty, 
+    singleton, populated). For each test, I pushed a char (different from all
+    the chars already in the list to make testing more distinct) to the front 
+    and used assert statements to make sure all other chars indicies were 
+    shifted over properly in the list, size was updated, and first() was updated
+    as well. I used this same framework to test my pushAtBack function, except
+    instead of checking to make sure first() was updated, I checked to make sure
+    last() was updated. 
+
+    To test my clear function, I created four unit_tests. The first tested it 
+    on an empty linked list, which was essentially going to do nothing. I just 
+    wanted to make sure there were no double-frees or seg faults. For the next 
+    test, I ran clear on a single element linked list. On this test, I checked
+    to make sure that the front pointer was set to null. However, this was 
+    commented out because the front pointer is a private member variable that 
+    I temporarily made public for testing purposes. Lastly, to make sure 
+    clear was truly clearing the list, I called clear on a populated list 
+    and then called pushAtBack to make sure that those two calls would create 
+    a single element linked list. 
+
+    I mostly tested my first and last functions together. Each of them got their
+    own respective funtion to test against an empty array list to catch each 
+    error. Otherwise, I tested them both together in the same function. One 
+    function tested them in a single list, which was simple enough. The next
+    test looked at the first and last of a populated list. The final test looked
+    altered the first and last elements of a populated linked list by calling 
+    pushAtFront and pushAtBack and then asserting that the first and last 
+    elements have been updated.  
+
+    Because elementAt was the way I was testing the indicies of arrays, I 
+    only had three tests explicitly for elementAt. Otherwise, it was tested 
+    implicitly, because I knew what chars should be at which index in the 
+    CharLinkedList. The first one tested elementAt in a standard context, just 
+    returning the chars at the correct indicies. The other two tests were meant
+    to catch range errors, with one test giving an index too high and the other
+    giving too low of an index. Both tests caught the errors. 
+
+    I created nine tests to test my insertAt function. Four of those nine were 
+    meant to catch errors, covering each case and looking at too high or too 
+    low of a range. Each test caught the errors. The other tests looked at 
+    different places to insert in each case, front, back, and middle (middle
+    only for populated linked lists). I then checked each individual index 
+    of the lists to make sure everything was inserted and other nodes were 
+    updated to the right place. 
+
+    I had five tests to check my concatenate function. The first test tried to 
+    concatenate two populated CharArrayLists and the assert functions were used 
+    to make sure that size was updated, the first element stayed the same, the 
+    last element was the last element of the second list, and that a random 
+    index in the middle of the concatenated list was correct. For the second 
+    test, I tried to concatenate a list onto itself. I tested the size, first, 
+    last, and a middle index to make sure it had concatenated correctly. For the
+    third test, I tried to concatenate an empty array list onto a populated
+    array list, and for the fourth test, I tried to concatenate a populated
+    array list onto an empty array list. In these last two tests, I made sure 
+    that the size, first, middle, and last elements were all the same as the 
+    populated list. For the final test, I tried to concatenate two empty linked
+    lists, and just checked to make sure everything was still empty and there
+    were no rouge pointers. Because this was mostly the same testing framework
+    as my CharArrayList tests, much of this paragraph matches my CharArrayList
+    one on concatenate. 
+
+    For the insertInOrder function, I had 5 tests. The first test inserted
+    a char into an empty linked list. I used assert to make sure the list was
+    updated to be a one-element linked list. For my second test, I inserted a 
+    char that would go in front of the only element in a single element linked
+    list. To test this and the following functions, I used toString rather than
+    elementAt to check at the order of the chars. I commented out the cerr 
+    statement(s) and the line(s) (because multiple functions) that I used to
+    check the list order in terminal. I then tried insertInOrder for the back 
+    and middle of populated linked lists. Until this point, all the chars I 
+    inserted were different from all the chars in the list. For my last test, 
+    I inserted a char that was the same as a char that was already in the list
+    to make sure that my boundary conditions in the function were correct. 
+
+    The most difficult part of this assignment for me was probably writing the 
+    reassignment operator. For some reason, it was concatenating the lists 
+    together. When I put a cerr statement to try and catch it in my test 
+    function, it outputed what I wanted it to be. However, in Valgrind's error
+    statements, it showed the two lists concatenated together. I couldn't 
+    figure out why it was doing that, and I spent hours looking over that, my 
+    destructor_helper, and my pushAtBack to try and figure out the problem. 
+    A TA also wasn't able to figure it out, but later I was helped by another
+    TA who suggested adding a line of code after calling my destructor to set 
+    front equal to nullptr, and it fixed the issue! 
+
+    
+Time spent:
+-------
+Approximately 24 hours. 
+
+
+timer_main.cpp Questions:
+-------
+
+1. There are three categories of operations listed (insertion, removal, and 
+access). Within each category, list the times each operation took and rank the 
+operations from fastest to slowest. 
+
+
+Insert Operation: (from fastest to slowest)
+pushAtBack 100 times -- 2010 nanoseconds 
+pushAtFront 100 times -- 2969 nanoseconds 
+insertAt middle of list 100 times -- 1103390 nanoseconds
+
+Removal Operation: (from fastest to slowest)
+popFromBack 100 times -- 2090 nanoseconds 
+popFromFront 100 times -- 2205 nanoseconds 
+removeAt middle of list 100 times -- 1242544 nanoseconds 
+
+
+Access Operation: (from fastest to slowest)
+call first() 100 times -- 429 nanoseconds 
+call last () 100 times -- 452 nanoseconds 
+call elementAt() for middle of list 100 times -- 7098161 seconds 
+
+From fastest to slowest: access operation, removal operation, insert operation
+
+
+
+2. Discuss these rankings. Why were certain operations much faster or slower 
+than others? Which operations took approximately the same amount of time? What 
+are the features of array lists that caused these disparities or similarities
+in time? 
+
+The insert and removal operations were both notably slower than the access 
+operation. The two of them took approximately the same amount of time, most 
+likely because when adding or removing elements of a doubly linked list, all 
+the implentation has to do is change a few pointers and maybe delete a node. 
+This is a lot less costly than in array lists, which have to shift all of the
+elements in the array list over. However, because the list was doubly-linked, 
+there were already pointers for the front and the back of the list, which 
+made accessing the elements at those parts of the list very easy to locate. 
+Finding elements in the middle of the list takes a much longer time because 
+doubly-linked lists are not contiguous, so the functions have to search through 
+all of the nodes until it passes the desired number of nodes. 
+
+
+3. Now compare these measurements with the measurements you took for HW1. 
+Which operations are faster when using array lists? Which are faster using 
+linked lists? Why? 
+
+For elementAt in the middle of the list, the LinkedList took much, much longer 
+than ArrayLists. This is because array lists are contiguous, and linked lists 
+are not, so they have to travel from node to node to find the right one. The 
+complexity of this function in the ArrayList is O(2), but in linked lists, it's
+O(n). For inserting at front, linked lists were faster than array lists and
+it's because with array lists, you have to shift all of the elements over, 
+giving it a complexity of O(n). For linked lists, you just have to create a 
+new node and update pointers, giving it a complexity of O(1). Although the 
+runtime for the inserting at back was longer for linked lists than array lists, 
+the two both had the same complexity of O(1). The back pointer made it easy to
+access the back node and update it with the new node and char. 
+
+
+
+Additional Questions:
+-------
+1. Which functions in the interface were easier to implement for linked lists
+compared to array lists? Why? 
+It was much easier to implement the pushAtFront, pushAtBack, popFromFront, 
+popFromBack, and removeAt functions for linked lists than array lists. When 
+we had to do these with array lists, we had to shift all of the elements an 
+index over, which was super annoying. With linked lists, all we had to do was 
+create a new node, point it to two other nodes, and point those to nodes to 
+the new node. There was no shifting necessary. 
+
+2. Which functions in the interface were harder to implement for linked lists
+compared to array lists? Why? 
+To me, the third constructor, elementAt, toString and toReverseString, and 
+concatenate functions were harder to implement for linked lists than with 
+array lists. They were much easier with array lists because you can easily 
+access the data at whatever index you wanted, but with linked lists, I had 
+to make a recursive helper function to do that. These also involved a lot of 
+pointers (as the whole project did), which are much more confusing to me to 
+use than array lists. 
+
+3. If a client had an existing program that uses CharArrayLists, what changes
+would they have to make to their code to switch to CharLinkedLists? 
+From the client's perspective, CharArrayLists and CharLinked lists appear the 
+same. The only differences between the programs are under the hood, not the 
+way that they outwardly present themselves. The only difference they would have
+to make is which class they want to use, and then the implementation for 
+linked lists should be done for them already. The programmer created a new 
+class for the client that consists of pointers and nodes rather than a 
+dynamically allocated array. 
+
+
+
+
+
+
+
+
+
+
+
+
+

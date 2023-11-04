@@ -1,0 +1,231 @@
+README Proj 2: CalcYouLater
+Kasey Afshani 
+kafsha01@tufts.edu 
+
+
+Program Purpose: The purpose of this program is to create a postfix Calculator
+                 that's capable of processing and manipulating types int, bool,
+                 and RStrings. Users are able to store these types in elements
+                 called "Datums," and the program will create a stack of these
+                 elements that will allow the user to call different processes
+                 on them. 
+
+Acknowledgements: Yoda, John, Ella, Vedant, Andersen, Cameron
+got_int was copied from the code provided for us by the course. 
+n_fibs.cylc, fact.cylc, fib.cylc, fib_debug.cylc, and add.cylc were all 
+tests provided by the course. 
+
+Provided files: 
+
+    DatumStack.h: This file defines the DatumStack class. Users can use this
+                  class to store and manipulate Datums into a list structure 
+                  that will act like a stack. 
+
+    DatumStack.cpp: This file implements the DatumStack class. 
+
+    Parser.h: This file defines the ParseRString function, which will extract
+              the relevant data from between an opening and closing curly 
+              brace. 
+
+    Parser.cpp: This file implements the function defined in Parser.h. 
+
+    RPNCalc.h: This file defines the RPNCalc class. Users can use this class to
+               manipulate different elements in the DatumStack class with each
+               other, such as comparing and performing basic arithmetic on 
+               integers, pushing RString and booleans, and performing other 
+               functions based on what's on the top of the stack. 
+
+    RPNCalc.cpp: This file implements the RPNCalc class. 
+
+    unit_tests.h: This file provides testing for the DatumStack class. More 
+                  about this in the testing section. 
+
+    main.cpp: This file calls an instance of the RPNCalc class and gets the
+              program to run. 
+
+    Makefile: This file compiles all of the header and .cpp files into an 
+              executable called CalcYouLater. 
+
+    yes_not.cylc, weird_zeros.cylc, tons.cylc, smol_ton.cylc, small_ton.cylc, 
+    quit_rstring.cylc, quit_nest.cylc, quit_middle.cylc, not_if.cylc, 
+    not_file.cylc, not_exec.cylc, nested_ton.cylc, invalid_tests.cylc,
+    n_fibs.cylc, fib.cylc, fib_help.cylc, fib_debug.cylc, extra_ops.cylc, 
+    empty_tests.cylc, add.cylc, fact.cylc -- these are all test files
+    either provided by the course or that I created. More about each of them 
+    will be described in the testing section. 
+
+
+How to compile and run your program: 
+    Running "make" in terminal will compile the program and create an 
+    executable called CalcYouLater.
+    To run this, use ./ followed by the executable name, and then type in the 
+    commands that you want the program to run. 
+
+
+
+Data Structures/Algorithms used: 
+
+The primary data structure that I used was a vector to build my DataStack.
+I used this to mimic a stack by referencing the back of the vector as the "top" 
+of the stack. Since pushing at the back of the vector doesn't require a lot of 
+time or space (it has complexity O(1)), I thought that vectors would be the most
+efficient type of list structure in the std library to use, as we push and pop
+Datums very frequently throughout the program. Stacks are useful in any programs
+that deal with the most recent elements being pushed, since stacks are a LIFO
+data structure. This means that the most recent entries in the stack are the 
+ones that will be dealt with first. This is why stacks are the perfect data
+structure to use for a postfix calculator. We only want to deal with the recent
+data that the user inputted, which would be at the top of the stack. Anything
+else would be irrelevent for us in that moment, and it saves time/space to 
+automatically access the top element of the stack rather thah having to traverse
+a different type of list (such as one with a FIFO structure). 
+An example where this can be useful is in task interruption and resumption and
+with matching parentheses. The latter can be seen in our parseRString function!
+
+One of the algorithms I used in my program was for the if function. My algorithm
+was embedded into a try/catch statement, so that if any of the elements I was
+trying to access were invalid, the correct error statement would be thrown from
+DatumStack.cpp and caught in RPNCalc.cpp. For this algorithm, I created three
+Datum elements, one for each of the top three elements of the stack. I popped
+off the previous top element after creating each successive datum so I was able
+to grab the next one. Then, I checked to see if the third element (our testing
+element) was a boolean. If it was, the program then checked to make sure that 
+the other two elements were both RStrings. If any of these three conditions 
+weren't met, my program would print a cerr statement. If all three were true,
+I tested to see if the boolean that was in the stack was true or false. 
+Depending on the result of this check, I either pushed the true or false Datum
+case onto the stack and called exec to run the command nested in the RString
+I just pushed. 
+
+Another algorithm that I used was for performing operations and comparisons. 
+Any time a user typed in a number, a Datum element was created with that number
+and pushed onto the stack. When one of the operation or comparison operators
+were typed in, the query loop ran a function to perform the command. Datum
+elements were created to get the top two elements on the stack and make sure
+that they were ints, then ints were created to grab those ints from the Datum.
+Rather than pushing the operation or comparison operator onto the stack, I had 
+if/else conditions for what the program should do to the two ints we created. 
+Based on which case the user wanted. the result was pushed onto the stack.
+
+Testing: 
+To test my DatumStack class, I used unit tests. I used assert statements in
+each test to make sure that my program was processing the correct data and
+performing the correct respective action. I created tests for the two types
+of constructors, but didn't create a destructor because I used a vector to 
+create the DatumStack class and vectors automatically recycle the memory of
+its elements. Although both of my constructors passed their tests, I decided
+to call my default constructor and push elements onto the stack rather than
+calling the populated constructor. This way, I was able to test my push 
+function and other functions simultaneously (although, I did test my push
+function before deciding to do this). I tested pushing with each type of Datum
+element (int, bool, RString), and created a stress test for my push function
+to make sure it could handle a heavy amount of input. After the stress test,
+I was confident in my push function and moved on to testing my isEmpty function.
+I tested isEmpty on both populated and empty lisits to make sure that the 
+worked in any instance. The same testing framework was followed for my clear
+function and size function. Size was also indirectly tested throughout my 
+unit tests, as I asserted the size of my DatumStack in most tests just to make
+sure all was pushed or popped correctly. I tested my top function on a
+DatumStack with four elements to make sure that the top was the last element
+that I added. I also tested top on an empty stack to make sure the correct error
+would be thrown. The same framework was followed for my pop function. 
+
+THE FOLLOWING TESTING FILES WERE ALL RUN BY MY PROGRAM AND THE DEMO PROGRAM,
+WITH THE STDOUT AND STDERR OUTPUT BEING REDIRECTED INTO A FILE AND DIFFED. 
+File descriptions below. 
+
+Yes_not.cylc was created to test the not function under the correct conditions.
+This was the last test I created, because I honestly forgot that the not
+function existed and didn't include it in my other tests. This file assumes the
+correect input for the not function and ensures that it executes properly. 
+
+Weird_zeros.cylc tested mathematic operations with 0s that you aren't able to
+perform (like any number divided by zero). This file is how I was able to find
+out what the appropriate error message for this illegal operation was. 
+
+Tons.cylc was meant to overwhelm my program. At first, it had a recursive call
+in it, but this crashed not only my program, but also the demo program. TAs
+said that if the demo crashed, it wasn't something we were going to be tested
+on, and fib covered this type of recursive call (more on this later). However,
+small_ton.cylc and smol_ton.cylc were created to help me find the reason why 
+crash_tons.cylc (again, not provided because I learned we wouldn't be tested on 
+such a stream of commands). Small_ton.cylc is the smallest iteraion of a chunk
+of code from tons.cylc, and when that passed, I created smol_ton.cylc to try
+and see if the code crashing was from the next bit of code. This helped me learn
+that the recursive file call was crashing the program, so I removed it, and
+tons.cylc, small_tons.cylc, and smol_tons.cylc all passed my diff testing and 
+no longer crashed either program. 
+
+Next, I wanted to test for weird quit cases. Quit_rstring.cylc tested to see 
+what would happen if the word "quit" was nested between two curly braces. I 
+needed to make sure it would still be passed in as an RString and not a quit 
+command. It did. Then, I created quit_nest.cylc, in which quit was embedded
+as an RString within an RString. I then called exec, which should have executed
+the exterior RString and left { quit } alone, which it did. Then, I tested to
+see what would happen if quit was placed normally in the middle of a file. The
+function should have exited, printed the thank you message, and terminated the
+program. At first, my program only exited the copy of the query loop that was
+created from the file, but went back to the first query loop. To fix this, I 
+created a private member variable boolean called finished that checked to see
+if the program was done. Then, I removed the return statement I had at the end
+of my quit case and changed finished to true, and wrote a condition that if 
+finished was true, the program should return (aka exit out of the query loop) 
+and terminate. 
+    
+I created the file empty_tests to test all of my functions on an empty 
+DatumStack to make sure that all of the errors that were thrown were being 
+caught and that the program wouldn't abort. After those tests passed, I wanted 
+to make sure that the commands were still popping off the necessary elements,
+even when their functions couldn't be executed because of a lack of the correct
+number of elements on the stack. For example, if requires three elements to be
+on the stack, but if there are two, it'll cerr and error message, but the two
+elements on the stack should be popped off anyways. To test this type of input
+with if, file, and exec, I created not_if.cylc, not_file.cylc,
+and not_exec.cylc. Each of the files have every type of bad case for the 
+function to be called on. I'll go into depth for the not_if.cylc file, but 
+not_exec and not_file follow this same type of structure, adjusted for the
+necessary inputs for each respective function. First, I tested if with a boolean
+(correct) on the stack, followed by an int. This both doesn't have enough 
+elements to call if on, but 1 is not an rstring, so the function will print
+the expected rstring in branch error and pop the two elements off the stack. 
+Then, I pushed two ints onto the stack and called if. Again, these are supposed
+to be a bool and two rstrings, so the program cerrs an expected bool statement
+and pops the ints off the stack. Then I pushed two bools and an RString, which
+is the right number of elements, but one of the bools was supposed to be an
+RString, so it cerrs that it needs an RString and popped all three elements off
+the stack. Then, I pushed an int and two RStrings onto the stack. Again, the 
+right number of elements, but the int should be a bool, so the program cerrs
+that a bool was expected, and pops all three elements off the stack. Again, 
+this type of idea framework was also applied to not_if and not_exec. 
+    
+Invalid_tests.cylc has the same idea as the not tests described above, but for
+the other operations. For example, in the file I pushed a singular int and 
+called a comparison or operation on it. Since there was only one int, however,
+it prints an empty_stack error and pops the int off of the stack. I repeated 
+this for every type of operation and comparison. Then, I tried to run all of 
+the other types of functions on invalid input as well. I tested on empty 
+RStrings and other datum elements of the wrong type for the function to be
+called on. For example, I called exec on 7, but since exec requires an RString,
+it printed an errors statement. Invalid_tests had some overlap with my not 
+files, but was not nearly as thorough as the not tests in the invalid input 
+for exec, file, and if. 
+   
+Another way that I tested for invalid input was with my extra_ops.cylc file. 
+I tested the arithmetic operations, but put more operations than there were 
+ints on the stack to see if it would print the appropraite "empty stack" error
+message. I tested this both regularly and in an RString that I called exec
+on. 
+
+The course also provided some files that I used for testing: n_fibs.cylc, 
+fib.cylc, fib_debug.cylc, fact.cylc, and add.cylc. I also created a 
+fib_help.cylc to help me debug fib, because fib_debug.cylc wasn't helping me. To
+create this, I slightly altered some code by fib.cylc, which was written by
+Marc Sheldon. The fib files all deal with recursive file calls from within
+a file. Add.cylc tested the arithmetic operations with correct input. Fact.cylc
+also deals with a recursive file call, imitating a factorial. With these files
+and all of the other .cylc files I listed above, I rerouted both stdout and 
+stderr into an output file for my program and the demo program and ran diff
+on the files to ensure that my program was doing the same as the demo.  
+
+Total time spent: 
+~25 hours

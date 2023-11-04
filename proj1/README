@@ -1,0 +1,140 @@
+/**********************************************************
+* Project 1: Metro Simulator
+* CS 15
+* README
+* Kasey Afshani 
+*
+*********************************************************/
+
+Compile/run:
+     - Compile using
+            make MetroSim
+     - run executable with
+            ./MetroSim stationsFile passFile [commands]
+
+
+Program Purpose:
+To create a simulation of the Green line, where passengers can enter and exit
+the train and a log is created of where they departed. 
+
+Acknowledgements: 
+Yoda, Anderson, John, Ahbi, Vedant, Lily, Jeff, Alana and Olivia — thank you! 
+
+Files: 
+
+main.cpp:
+     Main file should be short and handle simple driver
+     functions such as reading in files.
+
+MetroSim.cpp:
+     Implementation of MetroSim class.  Main
+     functionality of running the Metro Simulation, should be able to
+     move trains and deal with passengers going on/off the train.
+
+MetroSim.h:
+    Interface of MetroSim class.
+
+stations.txt:
+     an example file containing a list of stations.
+
+test_commands.txt:
+     sample list of commands that you could give to the simulator
+
+the_metroSim:
+     reference implementation for students to see how 
+
+PassengerQueue.h
+     Create the function definitions for the PassengerQueue class. 
+
+PassengerQueue.cpp: 
+     Implementation of the PassengerQueue class. Allows the user to manipulate
+     the queue by adding/removing passengers. 
+
+Passenger.h
+     Create the passenger class (as a struct) to hold all of the information for
+     each passenger. 
+
+Passenger.cpp
+     Implement the passenger class's function (only one, the print function)
+
+
+
+Data Structures:
+For this assignment, I chose to use vectors because to me, the ability to 
+access any of the passenger queues easily was important to me. Rather than have
+all of the stations pointing to each other and constantly having to update 
+pointers, I just wanted to move to the next index in my vector. 
+
+I used vectors to create a train list and a station list so that it would be
+easy to access the specific location I was looking for within each of these 
+lists. 
+
+I also used a struct to populate each index of my stations vector with to keep
+track of all of the information for each station (name, passengerqueue, and 
+it's stop number). This made it a lot easier when trying to access different 
+parts of stations, especially when outputting the station that passengers
+departed at. The passenger's "to" number matched with a station name, and 
+structs made it easy to access that name. 
+
+
+Testing:
+
+
+To test my passenger and passenger queue classes, I create unit tests that 
+looked both at the edge and regular cases. I decided to throw errors for 
+functions that tried to access parts of an empty list even though it wasn't 
+required, so that I could look for it during testing. 
+
+
+In my tests, I looked at each of the functions of my PassengerQueue class and 
+tested them on empty queues, queues with only one passgenger, and queues with 
+multiple. The enqueue and the size functions were tested implicitly with my
+other functions. 
+
+For the second week, I tested my functions using diff instead of unit_test. The
+first function I implemented was my print function, so I could first check 
+with my own eyes to see if things were being printed in the proper format etc. 
+Then, I checked if my infiling was working correctly by printing the stations.
+To test my output files, I would run cat output.txt each time after running
+my program. I also ran diff tests on the output files that I created with the
+ones that the demo program gave. 
+
+I also created various test files to run with the program as it's commands. I
+tried to think of edge cases, like the train looping all the way around, a
+passenger having the same arrival and departure station, and adding a passenger
+at the station the train was already in. Before I did this, I created a basic
+test file that just moved the train around and added a few passengers. I did 
+this to see when the passengers were actually boarding and departing the train, 
+as when I diffed at first, they were performing this action one step too soon. 
+Special cases, like the train looping around, were given their own testing 
+file that I could diff with the demo program. Otherwise, I had a file to test
+the basics of the program and a file for a bit more complicated stuff 
+(mentioned above). I also ran the demo program in a terminal window next to 
+my program so I could watch how each successive input affected each program, 
+and that helped me a lot with little timing issues. 
+
+After submitting, I tried to find more edge cases, so I created a file with
+only two stations to see if my program would still behave correctly. I created
+another testing file that only dealt with stations 0 and 1, moving it a lot, 
+adding a bunch of passengers to one station, and adding passengers with the same
+arrival and departure stations. It still diffed with the demo program. Then, 
+I created a commands file that added a ton of passengers to the same station,
+with both the iterations of the train already being at that station and then 
+at a station the train hadn't arrived to yet. I had the train move around 50
+times, including destinations that were less than the arrival stations, and had
+passengers board at 25 and depart at 0, and I still passed my diff. 
+
+
+Part that you found most difficult:
+The most difficult part of this assignment was figuring out how the different
+file streams worked, especially because the compiler didn't like it when I used
+some of the "umbrella" streams, like fstream or even ostream. It made me change
+it to ofstream, which I still don't really understand why because both ostream
+and fstream encompass ofstream, but I got it working so I'm just not going to 
+question it. Also, I had to use some streams that we didn't talk about in class,
+like string streams, which I wouldn't have known about if it weren't for the
+TAs. Thanks guys! 
+
+Time Spent: 
+Week 1: 5 hours 
+Week 2: 17 hours
