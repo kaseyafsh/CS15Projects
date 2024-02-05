@@ -1,0 +1,160 @@
+README Proj 2: CalcYouLater
+Kasey Afshani 
+kafsha01@tufts.edu 
+
+
+Program Purpose: The purpose of this program is compress or decompress a given
+                 file using the Huffman Tree Coding algorithm.
+
+Acknowledgements: Yoda, Ella, Vedant, Anush, Lily, Sean, Alana, Hameedah
+MakeFig1Tree (usd for testing) was copied from the code provided for us by the 
+course, as were HuffmanTreeNode.h and BinaryIO.h. 
+ 
+
+Provided files: 
+
+    phaseOne.h: This file defines the functions for phaseOne.cpp
+
+    phaseOne.cpp: This file implements some of the basic functions that are 
+                  later used in HuffmanCoder.cpp.  
+
+    unit_tests.h: This file provides testing for phaseOne.cpp functions. More 
+                  about this in the testing section. 
+
+    Makefile: This file compiles all of the header and .cpp files into an 
+              executable called zap. 
+    
+    HuffmanCoder.h: This file includes the definitions for the HuffmanCoder 
+                    class, which are used to encode and decode files. 
+
+    HuffmanCoder.cpp: This file includes the implementation of the functions
+                      for the HuffmanCoder class. 
+
+    HuffmanTreeNode.h: This file includes the definitions for HuffmanTreeNodes.
+                       It was provided to us by the course. 
+
+    BinaryIO.h: This file includes the definitions for functions to convert our
+                encodings into actual binary and the reverse. It was also 
+                provided to us by the course.
+
+    all_ascii.txt, all_conll_english.txt, 
+    banana_apple.txt, banana.txt, ecoli.coli, 
+    hi.txt, playing.txt, sentences.txt, 
+    works_of_shakespeare.txt: These testing files were all provided by the 
+                              course and include a range of English characters,
+                              some consisting of gibberish, sentences, and
+                              only a couple of words. 
+
+
+    empty.txt, one_char.txt, same_char.txt, gibberish.txt: Text files I created
+                                                           for testing, more 
+                                                           in the testing
+                                                           section. 
+
+
+
+
+How to compile and run your program: 
+    For part one, run Make and run unit_test in terminal. For part 2, run make,
+    then ./zap [zap/unzap] inputfile outputfile. 
+
+
+
+Data Structures/Algorithms used: 
+I used an array of size 256 to implement my count_freqs function so that I 
+would have constant time access to each index in my array, which I wanted 
+because I use the array for many checks throughout my program. 
+
+I used the frequencies in this array to store my data in a priority queue. The
+NodeComparator was provided to us by the course, but this algorithm swaps 
+elements in the priority queue so that they are organized on a min heap. 
+
+This priority queue was then used to build a Huffman tree. The algorithm I used
+to build this tree was to create two HuffmanTreeNodes, and set each one equal
+to the first two elements in the priority queue. I then popped them off and 
+created a new HuffmanTreeNode on the heap, setting it's left and right pointers
+to each of the nodes I just popped off the priority queue. I added the values
+of the two nodes and set the new node's value equal to that sum, and pushed
+that node onto the priority queue. The NodeComparator took care of which place
+it went to in the priority queue. Because of this, I was able to perform this
+algorithm iteratively in a while loop rather than recursively, so this process
+was repeated until the priority queue had a size of one. By that point, this
+process had been done to every element in the priority queue and they had all
+been connected in a Huffman tree. 
+
+Another algorithm I used was to recycle memory. I used a post-order traversal
+of the Huffman tree to recursively delete each element of the tree without 
+losing any internal nodes. My base case was when the root was null. If it 
+wasn't I recursively called the function on the root's left and right, and then
+deleted the root. This allowed each of the leafs to be deleted before deleting
+the internal or root nodes. 
+
+
+
+Testing: 
+Phase One: 
+I tested count freqs with a main function by passing in the testing files and 
+couting the frequencies for each char that had a frequency greater than 0. 
+I tested serialize and deserialize first seperately on unit tests using the Fig1
+tree from the course-provided ZapUtilExample.cpp, then ran serialize and
+deserialize on each other using both the Fig1tree and a tree that I made myself.
+I created a serialized string by hand based on the text files given to us (like
+banana.txt for example), and tested deserialize on it to be safe. Because we
+weren't given anything to recycle our memory for phaseOne, my unit tests were
+all failing valgrind, and I couldn't tell if it was because of my own memory
+leaks or something that I didn't have to worry about yet. Because of this, I 
+created a function to recycle memory, and this allowed me to ensure that I was
+using memory correctly in these functions for phase one. 
+
+For phase two, I did the first part of my testing in main. I wasn't very worried
+about using files correctly or anything, so I just opened the file and created
+a HuffmanCoder object to call functions from the HuffmanCoder class on. I 
+temporarily made the functions public until I was able to built my encoder
+function, make the other functions private, and call the encoder function in 
+main instead. I would frequently print the tree using the printTree function
+from ZapUtil to check and see if my Huffman Tree and character codes matched
+what I had drawn by hand. To check each individual component, I frequently 
+sent things to cout, such as the code for each character, at the same time as
+printing the encoding of the entire file and the Huffman tree. This made it easy
+to check and see if each character encoding was correct, and if the encoding
+of the entire file matched up correctly with the encoding for each of the 
+individual characters in the correct order/length/etc. 
+
+After testing each individual function using cerr, cout, and printing the tree, 
+I called each of them in encoder and decoder and called them in main. I first
+tested encoder by having two terminal windows open side by side next to each 
+other. I would call zap on the same input file, but with my program on one 
+terminal and the demo program on another terminal. This allowed me to check and
+see if my compression mached the demo program's compression in terms of the 
+number of bits. After doing this for each of the test files, and felt confident
+with my encoder, I started to check my decoder. This time, I called zap on each
+of the input files using my own executable, and then ran unzap. I compared the
+input file with zap with the output file for unzap using diff to ensure that
+the two were the same. 
+
+While testing, I found that my program wouldn't encode a tree with a single 
+node because the string passed into the function was never updated if the node
+entering the function was already a leaf. To get around this, I created a 
+counter in the function to see if there was only one character that had a 
+frequency greater than 0. If this was the case, that meant that there was only
+one character in the tree, and I updated the string to consist of just "0". The
+program then started to encode single-node trees. I had a similar checker for
+decoding as well. At first while testing, I was segfaulting, but then I created
+the checker. If it found that there was only one number in the binary string
+encoding, it found the value of that node and concatenated that letter to an
+initially empty string for as many times as the length of the binary string. 
+I then checked to make sure that these two edge cases were working using the 
+one_char and same_char text files and performing the checks as described in the
+above paragraph. 
+
+To check for empty nodes, I created a function to catch when this occured and 
+printed a cerr statement. To check, I ran my Zap with an empty test file 
+(empty.txt) and the demo program with this same file, and diffed each of their
+outputs. To try and break the program, I tried to create a file of pure
+gibberish. In hindsight, this wasn't very effective, as the provided testing
+files were much longer and more elaborate than my gibberish, but I created this
+testing file and ran the above procedures on this file as well. 
+
+
+Total time spent: 
+~23 hours
