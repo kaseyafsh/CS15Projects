@@ -1,0 +1,221 @@
+README Proj 4: GERP!
+Kasey Afshani and Hank Sun 
+kafsha01 and hsun03
+
+
+Two warnings when compiling: We decided to pass in our hash (a private member 
+variable) as a parameter to a couple of functions for modularity, as we have to 
+pass in a hash that is not our private member variable when calling our expand 
+function. If we did not do this, we had to have two essentially identical 
+functions, with the only difference being that one uses a hash passed in as a 
+parameter and one uses our private member variable hash. 
+
+
+Program Purpose: The purpose of our program is to simulate the "grep" command on
+Linux and allow us to index through a folder containing a set of files and 
+subdirectories to search for all instances of a user-provided word in these 
+files. Users are able to search for words case-sensitively or 
+case-insensitively, have their results directed to a new output file, and quit 
+the program. 
+
+Acknowledgements: Yoda, Sean, Lily, Erin, Arya, Anush — THANK YOU! 
+ 
+
+Provided files: 
+
+    HashTable.h: This file defines the HashTable class. Users are able to use 
+                 this class to call all of the functions listed in the "how to 
+                 run our program" section. 
+
+    HashTable.cpp: This file implements the HashTable class. 
+
+    Makefile: This file compiles all of the header and .cpp files into an 
+              executable called gerp. 
+
+    unit_tests.h: This file provides testing for the phase one section of this 
+                  project. More about this in the testing section. 
+
+    test_new_file.txt: tests the @f function of our program 
+
+    test_quit.txt: tests the @q function of our program 
+
+    sneaky_test.txt: input commands file searching for a word between an odd
+                     series of non-alpha numerical characters
+
+    weird_tests (folder): non_alpha.txt, repetition.txt. more about this in 
+                          testing section. 
+
+    cap_case.txt, more_lower.txt, all_lower.txt, test.txt, empty_test.txt: small
+                  text files to use as the files to search through for testing 
+                    
+    test_input_ref.txt, test_input.txt: input file of commands that tests a wide
+    variety of commands, including making multiple output files and searching 
+    for words that do not exist in our files. Essentially identical, except
+    for the names of the new output files that are being created in each. 
+
+
+
+
+How to compile and run your program: 
+
+First, run "make" in terminal. Then, type "./gerp", followed by the input 
+directory and lastly the output file. (./gerp inputDirectory outputFile). To 
+search for a word case-sensitively, simply type the word into the terminal after
+prompted by the word "Query?". To search case-insensitively, either type @i or 
+@insensitive before the word you are searching for. To change the output file 
+your data is going to, type @f followed by the name of the output file you want
+to redirect your data to. To quit the program, type @q or @quit. 
+
+
+Architectural overview:
+In FSTree, the DirNode class is included so that we may find the root of each
+tree that is created in order to traverse it.
+Our HashTable class incudes both the FSTree and DirNode class, so that we may 
+create a tree out of the directory that is given. FSTree is also needed to
+traverse throughout the tree and read in the information of each file in the
+directory and in all subdirectories. Our HashTable class is called in the main
+of our program to carry out both the indexing the proper query loop.
+
+Data Structures/Algorithms used: 
+We had several different data structures used in the program. The first being
+our hash table, which is a static array that is allocated on the heap and the
+capacity is set initially in our constructor. If capacity is filled, then the
+expand function is called to create a larger array. Inside each index in the
+array we created a std::list that takes in our KeyValue struct. The list itself
+takes care of chaining, where if the hash function hashes a new word to the
+same index, then the word is added to the end of the list. The KeyValue struct
+holds three things: the key, which is a string, and two int vectors, one
+holding an index of files and the other holding an index of line numbers. These
+two vectors are parallel, and the int at the same index means that at the file
+which is indexed by what is stored in the file_index on line of line_number at
+the index is an instance of the word.
+These two indexes then goes into two other data structures. The file paths is
+stored in a vector of strings that holds the file path, which is pushed back 
+whenever a new file is being read in, and the corresponding file index is added
+to the file_index of each KeyValue struct. The line itself is stored in a 2D
+vector, where the horizontal axis is the file they belong in, and the verticle
+axis is the line number itself. 
+
+During indexing, our program first builds a tree out of the directory that is
+provided, then we traverse the tree to find each file inside it. The files are
+opened and each new file and its path is indexed inside our file_paths vector.
+We then get the line of each file and update it into our 2d vector of line_info
+as well as storing the file index and line number into a newly constructed
+KeyValue pair with the stripped version of the key. 
+This is when Hashing occurs. The word is changed into all lowercase with the
+tolower() function and then hashed through the hash function given in 
+hashExample.cpp. If the array at the index is empty, then add the KeyValue pair
+to that bucket as the top of a list. If not, traverse the list to either find a
+matching key and then store the file index and line num ints inside that pair,
+or add a new element to the list at the end with the current KeyValue pair. If
+during adding to an existing bucket, check that the previous line num int and
+file index are not the same. If they are, then do not add again as it is a
+duplicate.
+Repeat until all files have been read through and indexed.
+
+During retrieval in our query, we determine if it is insensitive or sensitive.
+If it's sensitive, then the program simply hashes the non capitalized version
+of the given command to find the correct hash index, then traverse through
+until it finds the matching key to the original command, then traverse through 
+that bucket to find the correct file index and line num. Go to the respective
+index inside our file paths vector and 2d vecotr line info, retrieve the 
+strings and concatenante them into the output file.
+For insensitive, the process requires a similar logic, but stead of finding
+just the same bucket, the key itself is turned into a non-capitalized version
+and every bucket that matches the non-capitalized command search will be 
+printed into the output file. To avoid duplications, which may occur in 
+multiple buckets, we send every line we need to print into a set first, then we
+concatenate each element of the set and send that into the output file.
+
+When transferring files, we close the original output file then open the new
+one provided, setting it as the designated output file to be passed into our
+finding functions.
+
+If @q or @quit is called, the program terminates out of the while loop. If
+reaching an end of file, the while query loop stops on its own due to the fact
+that the while condition which states there is a continued cin being taken in
+no longer holds true.
+
+Testing: 
+For phase one, we tested using unit_test. We created tests for stripNonAlphaNum
+that tested non-alpha-num characters at the beginning, end, and middle, of 
+strings of ints, upper case letters, lowercase letters, and different 
+combinations of the six. To test FSTreetraversal, we printed out the filepaths 
+for each file that was read into the function and compared it to the output on 
+gradescope to ensure that our tree was correctly reaching all of the necessary 
+files. The rule for unit_tests was commented out of our makefile, as are the 
+rules for building stringProcessing.o and FSTreeTraversal.o. This is because 
+we pasted these functions into our HashTable.cpp to use them in our final 
+executable. This resulted in us commenting out unit_tests.o because the rule
+to make unit_tests relied on these two files that we were no longer using. 
+
+For phase two, we primarily relied on using diff and creating our own test 
+files. After diffing and passing tinyData, we started to create our own command
+files and data files. 
+
+To test the basics, we created the input files test_new_file.txt and 
+test_quit.txt. The only thing written in test_quit was @q, to ensure that our 
+program was quitting properly without any extra output. For test_new_file.txt, 
+we included a command, then our @f command, then another command to check and 
+see if our new output was being moved to our new output file. 
+
+We created a function that is now commented out at the bottom of our 
+HashTable.cpp that printed all of the information stored in our hash. We used 
+this at the beginning of phase 2 to test that our hash was being built properly.
+This was called in our query loop, but that call has been deleted so that we 
+wouldn't have any commented out code in the functions that gerp runs for 
+submission. The commented-out function at the bottom runs through for loops to 
+print all of the keys, line numbers, and file information that is stored in our 
+Hash. 
+
+Cap_case.txt was a smaller test file that again looked specifically at 
+case-insensitive duplicates. More_lower and all_lower were test files that we 
+created at the beginning of our testing to see if our function could index 
+through smaller files. These were the files that we used to make sure that our 
+hash was working properly, when we called the function described above that 
+printed our hash. 
+
+We ran sneaky_test.txt (a file of commands) on smallGutenberg. We created this
+testing file after failing one of the tests on gradescope, trying to find the 
+bug in our code that was causing the problem. With this file, we found a problem
+in where we were calling stripNonAlphaNum, causing a problem in which way 
+certain words were stored. sneaky_test.txt consisted of two lines. The first was
+the word "joke," surrounded in both the front and back with an odd series of 
+non-alpha-numerical characters. The second included repetition in a sentence, 
+but with one of the repeats containing a different case-order than the other. We
+used this test file to identify the causes for these problems in our code and 
+were able to correct them. 
+
+The folder weird_tests consisted of the files non_alpha.txt and repetition.txt. 
+This extended the type of tests that were listed in the previous paragraph. 
+Non_alpha.txt was a test file of commands that included non-alpha-num characters
+in the front and the back of them. Repetition.txt consisted of repetition on 
+different words on the same line and was used to ensure that the lines were only
+being printed once. We didn't have a problem with case-sensitive repeats, but 
+case-insensitive ones were difficult, as mentioned above. We used these two 
+tests (combined with an online diff checker, to help sort through the abundance 
+of output) to target our problems with repetition and non-alpha num characters 
+and ensure that our program was locating the correct word and only printing 
+repeats (especially case-insensitive repeats!) only once. Test.txt also 
+contained a lot of repetition for testing. 
+
+empty_test.txt was an empty file that we passed into our program as a command 
+file to make sure that our program would quit if it reached an "end of file." 
+A variety of the files mentioned above also did not include an @q at the end of 
+them to test and make sure that our program would quit at the end of a file. 
+
+Test_input_ref.txt and test_input.txt were files that we piped through our 
+program as command files. The two files were identical in commands, except for 
+when @f was called. For the sake of diff testing, we named the files that 
+followed @f differently in each of the two files so that we could run diff 
+testing of the two against each other. Other than that, the two files are 
+identical. 
+
+All of the files above were run with diff testing with varying combinations of 
+commands files and folders to index (including the files provided to us, 
+tinyData, smallGutenberg, mediumGutenberg, and largeGutenberg).
+
+
+
+Total time spent: 
+~26 hours
